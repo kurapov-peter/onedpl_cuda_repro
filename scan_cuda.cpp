@@ -46,7 +46,7 @@ std::vector<T> expected_out(const std::vector<T> &v, Func<T> f) {
 }
 }
 
-void scan(DeviceType dt) {
+void scan_cuda(DeviceType dt) {
   const size_t buf_size = 8;
   const std::vector<int> host_src = {1, 2, 3, 4, 5, 6, 7, 8};
 

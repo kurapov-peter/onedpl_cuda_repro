@@ -18,5 +18,8 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
 
-    scan(dt);
+    if (dt == DeviceType::GPU)
+        scan_cuda(dt);
+    else
+        scan(dt);
 }

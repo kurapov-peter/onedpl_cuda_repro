@@ -16,3 +16,4 @@ void dump_collection(const Collection &c, std::ostream &os = std::cout) {
 }
 
 void scan(DeviceType dt);
+void scan_cuda(DeviceType dt);
