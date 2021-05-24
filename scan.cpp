@@ -6,6 +6,19 @@
 
 #include "scan.hpp"
 
+class CUDASelector : public cl::sycl::device_selector {
+  public:
+    int operator()(const cl::sycl::device &Device) const override {
+      using namespace cl::sycl::info;
+      const std::string DriverVersion = Device.get_info<device::driver_version>();
+
+      if (Device.is_gpu() && (DriverVersion.find("CUDA") != std::string::npos)) {
+        return 1;
+      };
+      return -1;
+    }
+};
+
 std::unique_ptr<cl::sycl::device_selector>
 get_device_selector(DeviceType dt) {
   using namespace cl::sycl;
@@ -13,6 +26,7 @@ get_device_selector(DeviceType dt) {
   case DeviceType::CPU:
     return std::make_unique<cpu_selector>();
   case DeviceType::GPU:
+    return std::make_unique<CUDASelector>();
   case DeviceType::iGPU:
     return std::make_unique<gpu_selector>();
 
