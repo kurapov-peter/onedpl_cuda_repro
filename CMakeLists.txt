@@ -21,7 +21,8 @@ add_executable(main main.cpp)
 # Separate binaries work fine
 #target_link_libraries(main scan)
 target_link_libraries(main scan_cuda scan)
-#target_link_options(main PRIVATE -fsycl -fsycl-targets=nvptx64-nvidia-cuda-sycldevice)
+# Adding appropriate link options make sycl find the kernel, but either for cuda or intel only
+target_link_options(main PRIVATE -fsycl -fsycl-targets=nvptx64-nvidia-cuda-sycldevice)
 
 # Separate binaries work fine
 #add_executable(main_cuda main.cpp)
