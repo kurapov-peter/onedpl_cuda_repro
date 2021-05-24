@@ -4,9 +4,7 @@
 
 #include <CL/sycl.hpp>
 
-#include <cstring>
-
-enum DeviceType {CPU, GPU, iGPU};
+#include "scan.hpp"
 
 std::unique_ptr<cl::sycl::device_selector>
 get_device_selector(DeviceType dt) {
@@ -23,18 +21,6 @@ get_device_selector(DeviceType dt) {
   }
 }
 
-template <class Collection>
-void dump_collection(const Collection &c, std::ostream &os = std::cout) {
-  bool first = true;
-  for (const auto &e : c) {
-    if (!first) {
-      os << " ";
-    }
-    os << e;
-    first = false;
-  }
-  os << "\n";
-}
 
 template <typename T> using Func = std::function<bool(T)>;
 template <typename T>
@@ -44,25 +30,9 @@ std::vector<T> expected_out(const std::vector<T> &v, Func<T> f) {
   return out;
 }
 
-int main(int argc, char* argv[]) {
-    DeviceType dt;
-    if (argc < 2) {
-        std::cout << "Please specify device type with: " << argv[0] << " gpu|cpu|igpu\n";
-        exit(1);
-    }
-    if (std::string(argv[1]) == "gpu")
-        dt = DeviceType::GPU;
-    else if (std::string(argv[1]) == "cpu")
-        dt = DeviceType::CPU;
-    else if (std::string(argv[1]) == "igpu")
-        dt = DeviceType::iGPU;
-    else {
-        std::cout << "Please specify device type with: " << argv[0] << " gpu|cpu|igpu\n";
-        exit(1);
-    }
-
-    const size_t buf_size = 8;
-    const std::vector<int> host_src = {1, 2, 3, 4, 5, 6, 7, 8};
+void scan(DeviceType dt) {
+  const size_t buf_size = 8;
+  const std::vector<int> host_src = {1, 2, 3, 4, 5, 6, 7, 8};
 
   std::vector<int> expected =
       expected_out<int>(host_src, [](int x) { return x < 5; });
