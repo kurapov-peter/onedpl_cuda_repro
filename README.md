@@ -2,5 +2,5 @@
 
 mkdir build && cd build  
 CXX=clang++ cmake ..  
-./scan
+./main gpu scan
 
