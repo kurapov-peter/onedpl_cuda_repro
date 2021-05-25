@@ -17,13 +17,25 @@ target_link_libraries(scan_cuda PRIVATE sycl oneDPL)
 target_compile_options(scan_cuda PRIVATE -fsycl -fsycl-targets=nvptx64-nvidia-cuda-sycldevice -fsycl-unnamed-lambda)
 target_link_options(scan_cuda PRIVATE -fsycl -fsycl-targets=nvptx64-nvidia-cuda-sycldevice -fsycl-unnamed-lambda)
 
-add_executable(main main.cpp)
-# Separate binaries work fine
-#target_link_libraries(main scan)
-target_link_libraries(main scan_cuda scan)
-# Adding appropriate link options make sycl find the kernel, but either for cuda or intel only
-target_link_options(main PRIVATE -fsycl -fsycl-targets=nvptx64-nvidia-cuda-sycldevice)
+
 
 # Separate binaries work fine
 #add_executable(main_cuda main.cpp)
 #target_link_libraries(main_cuda scan_cuda)
+
+add_library(const SHARED const.cpp)
+target_link_libraries(const PRIVATE sycl oneDPL)
+target_compile_options(const PRIVATE -fsycl)
+target_link_options(const PRIVATE -fsycl)
+
+add_library(const_cuda SHARED const_cuda.cpp)
+target_link_libraries(const_cuda PRIVATE sycl oneDPL)
+target_compile_options(const_cuda PRIVATE -fsycl -fsycl-targets=nvptx64-nvidia-cuda-sycldevice)
+target_link_options(const_cuda PRIVATE -fsycl -fsycl-targets=nvptx64-nvidia-cuda-sycldevice)
+
+add_executable(main main.cpp)
+# Separate binaries work fine
+#target_link_libraries(main scan)
+target_link_libraries(main scan_cuda scan const const_cuda)
+# Adding appropriate link options make sycl find the kernel, but either for cuda or intel only
+#target_link_options(main PRIVATE -fsycl -fsycl-targets=nvptx64-nvidia-cuda-sycldevice)
